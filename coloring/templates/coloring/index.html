@@ -18,6 +18,8 @@
 			position: absolute;
 			top: 0;
 		}
+    
+    
 
 		.swatch {
 			width: 24px;
@@ -34,10 +36,18 @@
 		    margin-left: auto;
 		    margin-right: auto;
 		    display: block;
+      
+      
 		}
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
+    
+    //draw rectangle with paper.js
+    
+    
+    
+    
 		window.onload = function() {
 			var canvas = document.getElementById('myCanvas');
 
@@ -50,21 +60,52 @@
 
 			// color palette
 			var cp = {
-				history: ["#000000"], // black selected by default
+				history: ["#000000", "#E1BF0E"], // black selected by default
 				options: [],
 				$container: $('#color-palette')
 			}
+      
 
 			// your rectangle gradient interaction goes in this function
 			// you may also add code outside of the function (e.g., global variables)
 			function myGradientInteraction(){
 				var tool = new paper.Tool();
+        
+        let width = 750;
+        let height = 750;
+        
+        
+        //goal, make a new rectangle without any bullshit copypaste
+        var topLeft = new paper.Point(175,275);
+        var size = new paper.Size(400,200);
+        var rect = new paper.Rectangle(topLeft, size);
+        var rpath = new paper.Path.Rectangle(rect);
+        
+        
+        rpath.fillColor = 'red';
+        //rpath.closed = true;
+        paper.view.draw();
+        
 
 				tool.onMouseDown = function (event) {
-
+          
+          
+          
 				}
 
 				tool.onMouseUp = function (event) {
+          
+          rpath.fillColor = {
+              gradient: {
+              stops: [cp.history[cp.history.length -2], cp.history[cp.history.length-1]],
+              
+              },
+          origin: event.downPoint,
+          destination: event.point
+};
+          
+          
+          
 					
 				}
 			}
@@ -80,6 +121,7 @@
 				        hit.item.fillColor = cp.history[cp.history.length - 1];
 				    }
 				}
+        console.log(cp.history);
 			}
 
 
@@ -140,9 +182,11 @@
 		}
 	</script>
 </head>
-<body>	
+<body>
 
-	<canvas id="myCanvas" width="750px" height="750px"></canvas>
+
+	 <canvas id="myCanvas" width="750px" height="750px"></canvas>
+  
 	<div id="color-palette"></div>
 </body>
 </html>
