@@ -19,6 +19,29 @@
 			top: 0;
 		}
     
+    #thickness {
+      display: flex;
+      align-content: horizontal;
+      
+    }
+    
+    #speed {
+      display: flex;
+      align-content: horizontal;
+      justify-content: center;
+      
+    }
+    
+    
+    
+    .slider {
+      
+    }
+    
+    .editButtons {
+      margin-top:30px;
+    }
+    
     
 
 		.swatch {
@@ -36,13 +59,51 @@
 		    margin-left: auto;
 		    margin-right: auto;
 		    display: block;
-        
-      
       
 		}
+    
+    .optionbar {
+      padding-left:0;
+      padding-right:0;
+      margin-left: auto;
+      margin-right:auto;
+      width: 700px;
+      height:75px;
+      border: 1px solid black;
+      
+      display: flex;
+      justify-content: space-between;
+    }
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
+    
+    /*global variables, and functions for navbar go here */
+    
+    var allPaths = [];
+    var currPath;
+    var rotationPath;
+    
+    var WIDTH = 5;
+    var SPEED = 4;
+    
+    function c() {
+      console.log("clearing");
+      for (var i = 0; i < allPaths.length; i++) {
+        allPaths[i].remove();
+      }
+      allPaths = [];
+    }
+    
+    function undo() {
+        console.log("button for undo works");
+      if (allPaths.length > 0) {
+        var toDelete = allPaths.pop();
+        toDelete.remove();
+      }
+      }
+    
+    
     
     
 		window.onload = function() {
@@ -50,12 +111,6 @@
       
 			var canvas = document.getElementById('myCanvas');
       
-      console.log("this executes");
-      
-      
-      
-        
-       // paper.view.draw();
 
 			
       /* //this gives the mandala background image
@@ -213,19 +268,20 @@
 				});
 			}
 
+      
+      
+      //INTERACTIVE PROTOTYPE HERE *******************
+      
+      //http://p2-paperjs-dpayne5-dpayne589733.codeanyapp.com:3000/coloring/
+      //undo/clear, boundaries, thickness bar, stop the spinning
 			function init(custom){
 				paper.setup(canvas);
 				getColorsCreatePalette();
         
         
+        
         var tool = new paper.Tool();
         
-        
-        //array to hold all curves drawn from mousedrags
-        var allPaths = [];
-        
-        var currPath;
-        var rotationPath;
         
         //wheel center point, @center of canvas
         var wheelCenter = new paper.Point(350,350);
@@ -235,50 +291,54 @@
           center: wheelCenter,
           radius: 300,
           strokeColor: 'black',
-          strokeWidth: 5
+          strokeWidth: WIDTH
         });
         
-        //test line to check if animation works
-        var testPath = new paper.Path();
-        testPath.strokeColor = 'blue';
-        testPath.add(new paper.Point(400,400));
-        testPath.add(new paper.Point(405, 405));
-        //testPath.add(new paper.Point(350,400));
+        
         
         
         //hold down to create a continous curve with respect to wheelCenter
         tool.onMouseDown = function(event) {
+          //CURRENT FUNCTIONALITY SHOWN AT MADELYN's HOUSE 5pm SATURDAY
           currPath = new paper.Path();
           currPath.strokeColor = cp.history[cp.history.length-1];
-          console.log("onMOuseDown execute");
+          currPath.strokeWidth = 10;
+          //end of Current
           
-          rotationPath = new paper.Point()
+          currPath.rotate(SPEED, wheelCenter);
           
-          //currPath.add(currPath.rotate(4, wheelCenter));
           
+
         }
         
         
         //creates a curve from the last position to the new position of mouse
         tool.onMouseDrag = function(event) {
-          //currPath.add(event.point);
-          currPath.add(currPath.rotate(1, wheelCenter));
+          //currPath.add(currPath.rotate(4, wheelCenter));
+          
+          
+          //CURRENT FUNCTIONALITY SHOWN AT MADELYN's HOUSE 5pm SATURDAY
+          currPath.rotate(4, wheelCenter);
+          currPath.add(event.point);
+          currPath.smooth();
+          //end of current
+          
         }
         
         
         //add the curve to allPaths, which then gets animated in onFrame
         tool.onMouseUp = function(event) {
+          //CURRENT FUNCTIONALITY SHOWN AT MADELYN's HOUSE 5pm SATURDAY
+          currPath.smooth();
           allPaths.push(currPath);
+          //end of current
         }
-        
-        
         
         //correct way to use onFrame, without paperscript (ie plain javascript)
         paper.view.onFrame = function(event) {
           for (var i = 0; i < allPaths.length; i++) {
             allPaths[i].rotate(4, wheelCenter);
           }
-          //testPath.rotate(3, wheelCenter);
         }
         
         
@@ -316,8 +376,41 @@
 <body>
 
 
-	 <canvas id="myCanvas" width="750px" height="750px"></canvas>
+	 <canvas id="myCanvas" width="700px" height="700px"></canvas>
   
-	<div id="color-palette"></div>
+	<div id="color-palette">
+    <div class="optionbar">
+  </div>
+    
+  </div>
+  <div class="optionbar">
+    <div class="editButtons">
+    <input type="button" value="Undo" onclick="undo()">
+    </div>
+      
+    <div class="editButtons">
+    <input type="button" value="Clear" onclick="c()">
+    </div>
+      
+    <div id="Thickness">
+      <p>
+        Thickness
+      </p>
+      <div class="slidecontainer">
+         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+       </div>
+      
+    </div>
+    <div id="Speed">
+      <p>
+        
+       Speed
+      </p>
+      <div class="slidecontainer">
+         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+       </div>
+    </div>
+  </div>
+  </div>
 </body>
 </html>
