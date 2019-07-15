@@ -11,6 +11,7 @@
 
 	<style type="text/css">
 		#color-palette {
+      margin-top: 300px;
 			width: 300px;
 			background-color: #f1f1f1;
 			display: flex;
@@ -69,7 +70,7 @@
       margin-right:auto;
       width: 700px;
       height:75px;
-      border: 1px solid black;
+      
       
       display: flex;
       justify-content: space-between;
@@ -87,21 +88,36 @@
     var WIDTH = 5;
     var SPEED = 4;
     
+    
+    
+    //clear button function
     function c() {
-      console.log("clearing");
       for (var i = 0; i < allPaths.length; i++) {
         allPaths[i].remove();
       }
       allPaths = [];
     }
     
+    //undo button
     function undo() {
-        console.log("button for undo works");
       if (allPaths.length > 0) {
         var toDelete = allPaths.pop();
         toDelete.remove();
       }
       }
+    
+    
+    //update WIDTH from slider
+    function sliderWidthChange(val) {
+        WIDTH = val;
+      }
+      
+      function sliderSpeedChange(val) {
+        SPEED = val;
+      }
+    
+    
+    
     
     
     
@@ -110,6 +126,13 @@
       
       
 			var canvas = document.getElementById('myCanvas');
+      
+      var widthSlider = document.getElementById("myRangeWIDTH");
+    var speedSlider = document.getElementById("myRangeSPEED");
+    
+    
+      
+      
       
 
 			
@@ -193,7 +216,6 @@
         function onFrame(event) {
           wheel.rotate(3);
           testPath.rotate(3);
-          console.log("frame execution");
         }
         
         
@@ -215,7 +237,6 @@
         var tool = new paper.Tool();
         
         var wheelCenter = new paper.Point(350,350);
-        console.log(wheelCenter);
         
         //create the potters wheel and animate it
         var wheel = new paper.Path.Circle({
@@ -236,7 +257,6 @@
 				        hit.item.fillColor = cp.history[cp.history.length - 1];
 				    }
 				}
-        console.log(cp.history);
         
 			}
 
@@ -302,7 +322,7 @@
           //CURRENT FUNCTIONALITY SHOWN AT MADELYN's HOUSE 5pm SATURDAY
           currPath = new paper.Path();
           currPath.strokeColor = cp.history[cp.history.length-1];
-          currPath.strokeWidth = 10;
+          currPath.strokeWidth = WIDTH;
           //end of Current
           
           currPath.rotate(SPEED, wheelCenter);
@@ -318,7 +338,7 @@
           
           
           //CURRENT FUNCTIONALITY SHOWN AT MADELYN's HOUSE 5pm SATURDAY
-          currPath.rotate(4, wheelCenter);
+          currPath.rotate(SPEED, wheelCenter);
           currPath.add(event.point);
           currPath.smooth();
           //end of current
@@ -337,7 +357,7 @@
         //correct way to use onFrame, without paperscript (ie plain javascript)
         paper.view.onFrame = function(event) {
           for (var i = 0; i < allPaths.length; i++) {
-            allPaths[i].rotate(4, wheelCenter);
+            allPaths[i].rotate(SPEED, wheelCenter);
           }
         }
         
@@ -397,7 +417,7 @@
         Thickness
       </p>
       <div class="slidecontainer">
-         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+         <input type="range" min="5" max="25" value="4" class="slider" id="myRangeWIDTH" onChange="sliderWidthChange(this.value)">
        </div>
       
     </div>
@@ -407,7 +427,7 @@
        Speed
       </p>
       <div class="slidecontainer">
-         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+         <input type="range" min="0" max="10" value="4" class="slider" id="myRangeSPEED" onChange="sliderSpeedChange(this.value)">
        </div>
     </div>
   </div>
